@@ -1,14 +1,14 @@
 #include <iostream>
 using namespace std;
-int FibonacciRecursion(int n){
+unsigned long FibonacciRecursion(unsigned long n){
     if ( ( n == 0 ) || ( n == 1 ) )
         return n;
     else
         return FibonacciRecursion(n - 1) + FibonacciRecursion(n - 2);
 }
 
-int FibonacciIteration(int n){
-    static int a = 0, b = 1, c;
+unsigned long  FibonacciIteration(unsigned long  n){
+    static unsigned long  a = 0, b = 1, c;
     if ( ( n == 0 ) || ( n == 1 ) )
         return n;
     else
