@@ -21,18 +21,17 @@ unsigned long  FibonacciIteration(unsigned long  n){
     return c;
 }
 int main() {
-    cout << "Hello, World!" << endl;
-    cout << "Which FibonacciRecursion Numbers do you want?";
+    cout << "Which FibonacciRecursion Numbers do you want?" << endl;
     int n;
     cin >> n;
     clock_t start,end;
     start=clock();
-    cout << "Recursion FibonacciRecursion(" << n << ") = " << FibonacciRecursion(n) << endl;
+    cout << "Recursion Fibonacci(" << n << ") = " << FibonacciRecursion(n) << endl;
     end=clock();
-    cout<<"Recursion FibonacciRecursion was running for "<<(double)(end-start)/CLOCKS_PER_SEC<< " s" <<endl;
+    cout<<"Recursion Fibonacci() was running for "<<(double)(end-start)/CLOCKS_PER_SEC<< " s" <<endl;
     start=clock();
-    cout << "Iteration FibonacciRecursion(" << n << ") = " << FibonacciIteration(n) << endl;
+    cout << "Iteration Fibonacci(" << n << ") = " << FibonacciIteration(n) << endl;
     end=clock();
-    cout<<"Recursion FibonacciRecursion was running for "<<(double)(end-start)/CLOCKS_PER_SEC<< " s" <<endl;
+    cout<<"Iteration Fibonacci() was running for "<<(double)(end-start)/CLOCKS_PER_SEC<< " s" <<endl;
     return 0;
 }
