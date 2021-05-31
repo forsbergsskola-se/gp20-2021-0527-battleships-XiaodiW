@@ -12,10 +12,11 @@ int FibonacciIteration(int n){
     if ( ( n == 0 ) || ( n == 1 ) )
         return n;
     else
-        for (int i = 1; i < n; ++i) {
+        while (n > 1) {
             c = a + b;
             a = b;
             b = c;
+            n --;
         }
     return c;
 }
@@ -24,8 +25,14 @@ int main() {
     cout << "Which FibonacciRecursion Numbers do you want?";
     int n;
     cin >> n;
+    clock_t start,end;
+    start=clock();
     cout << "Recursion FibonacciRecursion(" << n << ") = " << FibonacciRecursion(n) << endl;
+    end=clock();
+    cout<<"Recursion FibonacciRecursion was running for "<<(double)(end-start)/CLOCKS_PER_SEC<< " s" <<endl;
+    start=clock();
     cout << "Iteration FibonacciRecursion(" << n << ") = " << FibonacciIteration(n) << endl;
-
+    end=clock();
+    cout<<"Recursion FibonacciRecursion was running for "<<(double)(end-start)/CLOCKS_PER_SEC<< " s" <<endl;
     return 0;
 }
