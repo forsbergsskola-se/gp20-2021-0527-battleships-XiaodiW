@@ -5,6 +5,7 @@ bool GenerateShip(int);
 void GenerateMap();
 bool ValidLocation(int[2]);
 void PrintMap();
+void Attack();
 int map[size][size] = {0};
 int ship5_1 [5][2];
 int ship5_2 [5][2];
@@ -16,8 +17,9 @@ int ship2_1 [2][2];
 int ship2_2 [2][2];
 int templateShip [5][2];
 int main() {
-    GenerateMap();
+//    GenerateMap();
     PrintMap();
+    Attack();
     return 0;
 }
 
@@ -165,4 +167,13 @@ void PrintMap(){
         }
         cout << endl;
     }
+}
+void Attack(){
+    cout << "Which Point you want to attack? i.e. B3" << endl;
+    char input[3];
+    cin.getline(input,3);
+    int x = tolower(input[0], locale()) ;
+    x -= 97;
+    int y = input[1] -48;
+    cout << "x: " << x << "  y:" << y << endl;
 }
