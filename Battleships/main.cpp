@@ -1,5 +1,13 @@
 #include <iostream>
 using namespace std;
+struct Ship{
+    int size;
+    int headPosition[2]{};
+    int direction{};
+    explicit Ship(int size){
+        this->size = size;
+    }
+};
 const int size = 10;
 bool GenerateShip(int);
 void GenerateMap();
@@ -7,17 +15,10 @@ bool ValidLocation(int[2]);
 void PrintMap();
 void Attack();
 int map[size][size] = {0};
-int ship5_1 [5][2];
-int ship5_2 [5][2];
-int ship4_1 [4][2];
-int ship4_2 [4][2];
-int ship3_1 [3][2];
-int ship3_2 [3][2];
-int ship2_1 [2][2];
-int ship2_2 [2][2];
-int templateShip [5][2];
+Ship ships[] = {Ship(5),Ship(5),Ship(4),Ship(4),Ship(3),Ship(3),Ship(2),Ship(2)};
+Ship templateShip(5);
 int main() {
-//    GenerateMap();
+    GenerateMap();
     PrintMap();
     Attack();
     return 0;
@@ -26,68 +27,65 @@ int main() {
 bool GenerateShip(int shipSize){
     srand(time(0));
     int tempMap[size][size];
+    for (auto & i : tempMap)
+        for (int & j : i)
+            j = 0;
     Head:
     int sum = 0;
     for (auto & i : tempMap)
         for (int j : i)
             sum += j;
-    if(sum == size * size) return false;
+    if(sum >= size * size) return false;
     int head[2];
     head[0] = rand() % 10;
     head[1] = rand() % 10;
     tempMap[head[0]][head[1]] = 1;
     if(ValidLocation(head)) {
-        templateShip[0][0] = head[0];
-        templateShip[0][1] = head[1];
+        templateShip.headPosition[0] = head[0];
+        templateShip.headPosition[1] = head[1];
     }
     else goto Head;
     int directionArray[4] = {1,1,1,1};
     Body:
-    if(max_element(directionArray,directionArray + sizeof(directionArray)) == 0) goto Head;
-    srand(time(0));
+    int sum1 = 0;
+    for (int i : directionArray)
+        sum1 += i;
+    if(sum1 == 0) goto Head;
     int direction = rand() % 4;
     if(directionArray[direction] == 0) goto Body;
     directionArray[direction] = 0;
     switch (direction) {
         case 0:
             for (int i = 1; i < shipSize; ++i) {
-                int newLocation[2] = {templateShip[0][0] - i, templateShip[0][1]};
-                if(newLocation[0] >= 0 && ValidLocation(newLocation)) {
-                    templateShip[i][0] = newLocation[0];
-                    templateShip[i][1] = newLocation[1];
-                }
-                else goto Body;
+                int newLocation[2] = {templateShip.headPosition[0] - i, templateShip.headPosition[1]};
+                if(newLocation[0] < 0 || !ValidLocation(newLocation))
+                    goto Body;
             }
+            templateShip.direction = 0;
         break;
         case 1:
             for (int i = 1; i < shipSize; ++i) {
-                int newLocation[2] = {templateShip[0][0] + i, templateShip[0][1]};
-                if(newLocation[0] < size && ValidLocation(newLocation)) {
-                    templateShip[i][0] = newLocation[0];
-                    templateShip[i][1] = newLocation[1];
-                }
-                else goto Body;
+                int newLocation[2] = {templateShip.headPosition[0] + i, templateShip.headPosition[1]};
+                if(newLocation[0] >= shipSize || !ValidLocation(newLocation))
+                    goto Body;
             }
+            templateShip.direction = 1;
         break;
         case 2:
             for (int i = 1; i < shipSize; ++i) {
-                int newLocation[2] = {templateShip[0][0], templateShip[0][1] - i};
-                if(newLocation[1] >= 0  && ValidLocation(newLocation)) {
-                    templateShip[i][0] = newLocation[0];
-                    templateShip[i][1] = newLocation[1];
-                }
-                else goto Body;
+                int newLocation[2] = {templateShip.headPosition[0], templateShip.headPosition[1] - i};
+                if(newLocation[1] < 0 || !ValidLocation(newLocation))
+                    goto Body;
             }
+            templateShip.direction = 2;
         break;
         case 3:
             for (int i = 1; i < shipSize; ++i) {
-                int newLocation[2] = {templateShip[0][0], templateShip[0][1] + i};
-                if(newLocation[1] < size  && ValidLocation(newLocation)) {
-                    templateShip[i][0] = newLocation[0];
-                    templateShip[i][1] = newLocation[1];
-                }
-                else goto Body;
+                int newLocation[2] = {templateShip.headPosition[0], templateShip.headPosition[1] + i};
+                if(newLocation[1] >= shipSize || !ValidLocation(newLocation))
+                    goto Body;
             }
+            templateShip.direction = 3;
         break;
         default :
             goto Body;
@@ -108,54 +106,32 @@ bool ValidLocation(int location[2]){
     return true;
 }
 void GenerateMap(){
-    if(GenerateShip(5))
-        for (int i = 0; i < 5; ++i) {
-            ship5_1[i][0] = templateShip[i][0];
-            ship5_1[i][1] = templateShip[i][1];
-            map[templateShip[i][0]][templateShip[i][1]] = 1;
+    for (auto & ship : ships) {
+        int shipSize = ship.size;
+        if(!GenerateShip(shipSize)) return;
+        ship = templateShip;
+        map[ship.headPosition[0]][ship.headPosition[1]] = 1;
+        switch (templateShip.direction) {
+            case 0:
+                for (int i = 1; i < shipSize; ++i)
+                    map[ship.headPosition[0] - i][ship.headPosition[1]] = 1;
+                break;
+            case 1:
+                for (int i = 1; i < shipSize; ++i)
+                    map[ship.headPosition[0] + i][ship.headPosition[1]] = 1;
+                break;
+            case 2:
+                for (int i = 1; i < shipSize; ++i)
+                    map[ship.headPosition[0]][ship.headPosition[1] - i] = 1;
+                break;
+            case 3:
+                for (int i = 1; i < shipSize; ++i)
+                    map[ship.headPosition[0]][ship.headPosition[1] + i] = 1;
+                break;
+            default :
+                return;
         }
-    if(GenerateShip(5))
-        for (int i = 0; i < 5; ++i) {
-            ship5_2[i][0] = templateShip[i][0];
-            ship5_2[i][1] = templateShip[i][1];
-            map[templateShip[i][0]][templateShip[i][1]] = 1;
-        }
-    if(GenerateShip(4))
-        for (int i = 0; i < 4; ++i) {
-            ship4_1[i][0] = templateShip[i][0];
-            ship4_1[i][1] = templateShip[i][1];
-            map[templateShip[i][0]][templateShip[i][1]] = 1;
-        }
-    if(GenerateShip(4))
-        for (int i = 0; i < 4; ++i) {
-            ship4_2[i][0] = templateShip[i][0];
-            ship4_2[i][1] = templateShip[i][1];
-            map[templateShip[i][0]][templateShip[i][1]] = 1;
-        }
-    if(GenerateShip(3))
-        for (int i = 0; i < 3; ++i) {
-            ship3_1[i][0] = templateShip[i][0];
-            ship3_1[i][1] = templateShip[i][1];
-            map[templateShip[i][0]][templateShip[i][1]] = 1;
-        }
-    if(GenerateShip(3))
-        for (int i = 0; i < 3; ++i) {
-            ship3_2[i][0] = templateShip[i][0];
-            ship3_2[i][1] = templateShip[i][1];
-            map[templateShip[i][0]][templateShip[i][1]] = 1;
-        }
-    if(GenerateShip(2))
-        for (int i = 0; i < 2; ++i) {
-            ship2_1[i][0] = templateShip[i][0];
-            ship2_1[i][1] = templateShip[i][1];
-            map[templateShip[i][0]][templateShip[i][1]] = 1;
-        }
-    if(GenerateShip(2))
-        for (int i = 0; i < 2; ++i) {
-            ship2_2[i][0] = templateShip[i][0];
-            ship2_2[i][1] = templateShip[i][1];
-            map[templateShip[i][0]][templateShip[i][1]] = 1;
-        }
+    }
 }
 void PrintMap(){
     cout << "  A B C D E F G H I J"<< endl;
