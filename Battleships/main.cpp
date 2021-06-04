@@ -1,17 +1,7 @@
 #include <iostream>
+#include "Ship.h";
 using namespace std;
-struct Ship{
-    int size;
-    int headPosition[2]{};
-    int direction{};
-    int hits;
-    bool sunk;
-    explicit Ship(int size){
-        this->size = size;
-        hits = 0;
-        sunk = false;
-    }
-};
+
 const int size = 10;
 bool GenerateShip(int);
 void GenerateMap();
@@ -20,8 +10,8 @@ void PrintMap();
 bool Attack();
 int map[size][size] = {0};
 Ship * shipMap[size][size];
-Ship ships[8] = {Ship(5),Ship(5),Ship(4),Ship(4),Ship(3),Ship(3),Ship(2),Ship(2)};
-Ship templateShip(5);
+Ship ships[] = {Ship(5),Ship(5),Ship(4),Ship(4),Ship(3),Ship(3),Ship(2),Ship(2)};
+Ship templateShip;
 int main() {
     GenerateMap();
     bool win;
