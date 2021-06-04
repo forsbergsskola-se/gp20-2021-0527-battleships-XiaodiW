@@ -5,9 +5,11 @@ struct Ship{
     int headPosition[2]{};
     int direction{};
     int hits;
+    bool sunk;
     explicit Ship(int size){
         this->size = size;
         hits = 0;
+        sunk = false;
     }
 };
 const int size = 10;
@@ -15,19 +17,19 @@ bool GenerateShip(int);
 void GenerateMap();
 bool ValidLocation(int[2]);
 void PrintMap();
-void Attack();
+bool Attack();
 int map[size][size] = {0};
 Ship * shipMap[size][size];
-Ship ships[] = {Ship(5),Ship(5),Ship(4),Ship(4),Ship(3),Ship(3),Ship(2),Ship(2)};
+Ship ships[8] = {Ship(5),Ship(5),Ship(4),Ship(4),Ship(3),Ship(3),Ship(2),Ship(2)};
 Ship templateShip(5);
 int main() {
     GenerateMap();
-    int loop = size*size;
-    while (loop >0) {
+    bool win;
+    do {
         PrintMap();
-        Attack();
-        loop --;
-    }
+        win = Attack();
+    } while(win);
+    cout << "You Win!" << endl;
     return 0;
 }
 
@@ -161,7 +163,7 @@ void PrintMap(){
         cout << endl;
     }
 }
-void Attack(){
+bool Attack(){
     cout << "Which Point you want to attack? i.e. B3" << endl;
     char input[3];
     cin.getline(input,3);
@@ -173,9 +175,16 @@ void Attack(){
         map[x][y]=2;
         Ship *hitShip = shipMap[x][y];
         hitShip->hits ++;
-        if(hitShip->hits >= hitShip->size)  cout << "Ship Sunk" << endl;
+        if(hitShip->hits >= hitShip->size) {
+            hitShip->sunk = true;
+            cout << "Ship Sunk" << endl; }
+        int sunkShips = 0;
+        int shipCount = sizeof(ships)/sizeof(*ships);
+        for (int i = 0; i < shipCount; ++i)
+            if(ships[i].sunk) sunkShips ++;
+        cout <<"SunkShips: " << sunkShips << endl;
+        if(sunkShips >= shipCount) return false;
     }
     if(map[x][y] == 0)  cout << "Miss" << endl;
-
-
+    return true;
 }
